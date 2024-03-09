@@ -1,8 +1,10 @@
 import { sleep } from "@app/common"
+import { Public } from "@app/common/auth/user.decorator"
 import { RmqService } from "@app/common/rmq/rmq.service"
-import { Controller } from "@nestjs/common"
+import { Controller, Get } from "@nestjs/common"
 import { Ctx, EventPattern, Payload, RmqContext } from "@nestjs/microservices"
 import { ApiTags } from "@nestjs/swagger"
+import { HealthCheck, HealthCheckService } from "@nestjs/terminus"
 
 import { ReservationService } from "./reservation.service"
 
@@ -12,7 +14,15 @@ export class ReservationController {
   constructor(
     private readonly reservationService: ReservationService,
     private readonly rmqService: RmqService,
+    private readonly health: HealthCheckService,
   ) {}
+
+  @Public()
+  @Get("health")
+  @HealthCheck()
+  check() {
+    return this.health.check([])
+  }
 
   // RMQ
   @EventPattern("reservation.create")
