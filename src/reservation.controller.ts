@@ -18,6 +18,13 @@ export class ReservationController {
     private readonly health: HealthCheckService,
   ) {}
 
+  @Public()
+  @Get("health")
+  @HealthCheck()
+  check() {
+    return this.health.check([])
+  }
+
   @Get(":id")
   async getReservation(@Param("id") id: string, @User() user: UserType) {
     return this.reservationService.getReservation(id, user)
@@ -26,13 +33,6 @@ export class ReservationController {
   @Post(":id/confirm")
   async confirmReservation(@Param("id") id: string, @User() user: UserType) {
     return this.reservationService.confirmReservation(id, user.uid)
-  }
-
-  @Public()
-  @Get("health")
-  @HealthCheck()
-  check() {
-    return this.health.check([])
   }
 
   // RMQ
